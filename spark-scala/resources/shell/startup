@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+# author :lwd
+# date : 20171220
+# # flume-ng启动脚本采集kafka数据写入HDFS
+source /etc/profile
+now_time=`date +'%Y%m%d %H:%M:%S'`
+echo "the process start now ($now_time) ......"
+local_dir=$(cd "$(dirname "$0")"; pwd)
+echo $local_dir
+pidfile=$local_dir/kafka_source_flume.pid
+pid=$(cat $pidfile)
+
+isExists=$(ps -ef |grep $pid|grep -v grep|wc -l)
+echo "isExists is : $isExists"
+if [ $isExists -ne 0 ] ; then
+        echo "found kafka_source_flume started  , Please run stop.sh first ,then startup.sh" 2>&2
+    exit 1
+fi
+if [ ! -f $local_dir/kafka_source_hdfs_sink.conf ];then
+        echo "flume conf not found ...,please check it exists !!!"
+        exit 1
+fi
+flume-ng agent -c conf -f $local_dir/kafka_source_hdfs_sink.conf -n kf8 1>>$local_dir/kafka_source_hdfs_sink.log 2>&1 &
+echo $! >$pidfile

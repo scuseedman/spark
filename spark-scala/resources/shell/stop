@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+# author :lwd
+# date :20171221
+# stop the flume-ng agent . 
+local_dir=$(cd "$(dirname "$0")"; pwd)
+echo $local_dir
+pidfile=$local_dir/kafka_source_flume.pid
+if [ ! -f $pidfile ] ; then
+    echo "not found kafka_source_flume.pid , will exit ......" 2>&2
+    exit 1
+fi
+pid=$(cat $pidfile)
+echo $pid
+res=$(ps -ef |grep $pid|grep -v grep |wc -l)
+if [ $res -eq 1 ] ; then
+    echo "found kafka_source_flume started  , will stop it ......" 2>&2
+    kill -9 $pid
+    exit 1
+else
+   echo "$pid not exists ......."
+fi
+echo $?
+echo "................. end "

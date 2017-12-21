@@ -1,0 +1,20 @@
+Eclipse整合配置scala环境：
+1、安装JDK，配置JAVA_HOME=C:\Program Files\Java\jdk1.8.0_25
+2、安装SCALA 通常使用MSI文件进行在windows下的安装，配置SCALA_HOME=D:\soft\scala-2.11.8
+3、解压spark安装包，配置SPARK_HOME环境变量 SPARK_HOME=D:\soft\spark-1.6.0-bin-hadoop2.6
+4、配置SPARK_CLASSPATH环境变量，SPARK_CLASSPATH=%SPARK_HOME%\lib\spark-assembly-1.6.0-hadoop2.6.0.jar
+5、解压hadoop的压缩文件，添加HADOOP_HOME,HADOOP_HOME=D:\hadoop-2.7.3
+6、配置eclipse scala ide 插件
+7、配置M2_HOME环境变量 M2_HOME=D:\maven\apache-maven-3.3.9
+8、使用maven进行项目搭建
+9、maven 项目：new -> project -> maven project -> scala -> org.scala-tools.archetypes(version 1.2) -> group id/ artifactId  
+10、maven项目转scala项目：右键项目 -> configure -> add scala nature -> 之后会在pom文件报错。解决办法 是在pom文件的build标签plugins标签外面添加一层
+	<pluginManagement></pluginManagement>标签包围。-> 之后会再报错 more than one scala library in the build path -> 原因是eclipse ide内置插件的scala版本与pom带入的scala版本不一样
+	， -> 解决办法 ：修改为IDE版本一样的即可。实际上eclipse内置带入的是2.11.5，在我将pom的scala.version版本修改为2.11.8也可以。 
+11、网上有说法说是要将 org.scala-lang 这个依赖注释掉，而在实际些项目中，并没有注释掉。添加依赖：
+	  <dependency> 
+		<groupId>org.apache.spark</groupId> 
+		<artifactId>spark-core_2.11</artifactId> 
+		<version>1.6.1</version> 
+	</dependency> 
+	程序word count之后将会可以执行

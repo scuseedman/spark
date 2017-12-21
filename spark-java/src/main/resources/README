@@ -1,0 +1,9 @@
+eclipse配置spark程序：
+1、安装JDK，配置JAVA_HOME=C:\Program Files\Java\jdk1.8.0_25
+2、安装SCALA 通常使用MSI文件进行在windows下的安装，配置SCALA_HOME=D:\soft\scala-2.11.8
+3、解压spark安装包，配置SPARK_HOME环境变量 SPARK_HOME=D:\soft\spark-1.6.0-bin-hadoop2.6
+4、配置SPARK_CLASSPATH环境变量，SPARK_CLASSPATH=%SPARK_HOME%\lib\spark-assembly-1.6.0-hadoop2.6.0.jar
+5、解压hadoop的压缩文件，添加HADOOP_HOME,HADOOP_HOME=D:\hadoop-2.7.3
+6、配置eclipse scala ide 插件
+7、配置M2_HOME环境变量 M2_HOME=D:\maven\apache-maven-3.3.9
+7、建立maven项目进行开发

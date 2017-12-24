@@ -1,4 +1,4 @@
-package com.formax.scala
+package com.seed.scala
 /**
  * scala数据类型学习
  */

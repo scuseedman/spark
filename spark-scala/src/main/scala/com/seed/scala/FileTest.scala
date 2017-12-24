@@ -1,4 +1,4 @@
-package com.formax.scala
+package com.seed.scala
 /**
  * scala 文件操作
  * Scala 进行文件写操作，直接用的都是 java中 的 I/O 类 （java.io.File)：

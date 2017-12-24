@@ -1,4 +1,4 @@
-package com.formax.scala
+package com.seed.scala
 /**
  * scala trait特征
  * scala trait 特征类似于java的接口，但是功能比接口更强大
@@ -12,7 +12,7 @@ trait Equal {
 class Point2 (xc:Int,yc:Int) extends Equal{
   var x:Int = xc
   var y:Int = yc
-  def isEqual(obj:Any)=obj.isInstanceOf[Point] && obj.asInstanceOf[Point].x == x
+  def isEqual(obj:Any)=obj.isInstanceOf[Point2] && obj.asInstanceOf[Point2].x == x
   
 }
 object TraitTest{

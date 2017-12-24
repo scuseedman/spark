@@ -1,4 +1,4 @@
-package com.formax.scala
+package com.seed.scala
 
 /**
  * scala中函数表达式

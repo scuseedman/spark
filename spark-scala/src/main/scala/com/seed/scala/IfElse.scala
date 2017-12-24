@@ -1,4 +1,4 @@
-package com.formax.scala
+package com.seed.scala
 /**
  * if else条件判断语句
  * 语法结构：

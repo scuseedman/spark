@@ -1,4 +1,4 @@
-package com.formax.scala
+package com.seed.scala
 
 /**
  * 闭包：闭包是一个函数，其返回值依赖于函数声明外面的变量

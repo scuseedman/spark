@@ -1,4 +1,4 @@
-package com.formax.scala
+package com.seed.scala
 /**
  * scala提取器
  * 从传递给它的对象中提取出构造该对象的参数

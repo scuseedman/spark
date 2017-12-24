@@ -1,4 +1,4 @@
-package com.formax.scala
+package com.seed.scala
 
 object HelloWorld {
   def main(args: Array[String]): Unit = {

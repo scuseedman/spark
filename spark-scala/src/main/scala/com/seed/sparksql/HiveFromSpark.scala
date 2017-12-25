@@ -16,7 +16,7 @@
  */
 
 // scalastyle:off println
-package com.formax.sql
+package com.seed.sql
 
 import com.google.common.io.{ByteStreams, Files}
 

@@ -16,7 +16,7 @@
  */
 
 // scalastyle:off println
-package com.formax.sql
+package com.seed.sql
 
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext

@@ -1,4 +1,4 @@
-package com.formax.sparkStreamingKafka
+package com.seed.sparkStreamingKafka
 
 import java.util.Properties
 import scala.collection.JavaConverters._

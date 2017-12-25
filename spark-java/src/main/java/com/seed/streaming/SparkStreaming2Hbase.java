@@ -103,7 +103,7 @@ public class SparkStreaming2Hbase {
     // int windowInSeconds = 3;// Integer.parseInt(args[5]);
     // int slideInSeconds = 1;// Integer.parseInt(args[5]);
 
-    String zkQuorum = "test94.com,test95.com,test96.com:2181/kafka";
+    String zkQuorum = args[0];
     String group = "47";
     String topicss = "cs_finance";
     String numThread = "2";

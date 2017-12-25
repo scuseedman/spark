@@ -1,4 +1,4 @@
-package com.formax.streaming
+package com.seed.streaming
 
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.SparkConf
@@ -16,7 +16,7 @@ object KafkaWordCount {
 //      System.exit(1)
 //    }
  
-    val zkQuorum = "zk1,zk2,zk3:2181/kafka";
+    val zkQuorum = args(0);
     val group = "47";
     val topicss = "cs_finance";
     val numThread = "2";

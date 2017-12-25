@@ -84,7 +84,7 @@ public class JavaWordCount {
 		 * 创建的sparkContext 需要的唯一参数就是sparkconf,它是一个<k,v>结构的键值对
 		 */
 		SparkConf sparkConf = new SparkConf().setAppName("java word count").setMaster("local[1]");
-		JavaSparkContext jsc =  new JavaSparkContext(sparkConf);
+		JavaSparkContext jsc =  new JavaSparkContext(sparkConf);//java context 上下文对象
 		jsc.setLogLevel("WARN");//设置程序运行的日志级别
 		/**
 		 * 利用textFile方法输入数据，返回一个RDD实例对象.RDD的初始创建都是sparkContext负责的，将内存中的集合或者外部文件系统(本地/hdfs等)数据源

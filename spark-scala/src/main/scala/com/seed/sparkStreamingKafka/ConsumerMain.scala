@@ -1,4 +1,4 @@
-package com.formax.sparkStreamingKafka
+package com.seed.sparkStreamingKafka
 
 import scala.collection.mutable.Map
 

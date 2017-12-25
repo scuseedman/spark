@@ -1,4 +1,4 @@
-package com.formax.sparkStreamingKafka
+package com.seed.sparkStreamingKafka
 
 import scala.reflect.ClassTag
 
@@ -9,7 +9,7 @@ import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.kafka.HasOffsetRanges
 import org.apache.spark.streaming.kafka.KafkaUtils
-import com.formax.sparkStreamingKafka.KafkaCluster.LeaderOffset
+import com.seed.sparkStreamingKafka.KafkaCluster.LeaderOffset
 import kafka.common.TopicAndPartition
 import kafka.message.MessageAndMetadata
 import kafka.serializer.Decoder

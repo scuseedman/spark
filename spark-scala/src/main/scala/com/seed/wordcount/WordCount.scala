@@ -1,4 +1,4 @@
-package com.formax.spark_hello
+package com.seed.spark_hello
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext

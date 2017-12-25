@@ -1,4 +1,4 @@
-package com.formax.wordcount
+package com.seed.wordcount
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext

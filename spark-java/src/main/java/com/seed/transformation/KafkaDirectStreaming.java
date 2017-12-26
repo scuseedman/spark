@@ -1,25 +1,34 @@
 package com.seed.transformation;
 
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import kafka.serializer.StringDecoder;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
+
+import com.seed.utils.ConnectorPools;
 
 import scala.Tuple2;
 
@@ -29,6 +38,7 @@ import scala.Tuple2;
  *
  */
 public class KafkaDirectStreaming {
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 		SparkConf sparkConf = new SparkConf().setAppName("sparkDirect").setMaster("local[2]");
 		JavaSparkContext ctx = new JavaSparkContext(sparkConf);//用来设置日志级别
@@ -71,7 +81,7 @@ public class KafkaDirectStreaming {
 			}
 		});
 		result.print();
-				
+		
 		jsc.start();
 		jsc.awaitTermination();
 		jsc.close();

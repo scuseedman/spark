@@ -4,13 +4,13 @@ package com.seed.transformation;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import kafka.serializer.StringDecoder;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
@@ -24,19 +24,21 @@ import org.apache.spark.streaming.kafka.KafkaUtils;
 import scala.Tuple2;
 
 /**
- * 使用direct 方式进行消费kafka数据
- * 代码未调试，20171225 23：25
- * @author lwd
+ * 使用direct 方式进行消费kafka数据; 消费的数据可以记录到kafka的offset。过往的历史消息并没有被消费出来
+ * @author lwd; 
  *
  */
 public class KafkaDirectStreaming {
 	public static void main(String[] args) {
 		SparkConf sparkConf = new SparkConf().setAppName("sparkDirect").setMaster("local[2]");
-		JavaStreamingContext jsc = new JavaStreamingContext(sparkConf,new Duration(5000));
+		JavaSparkContext ctx = new JavaSparkContext(sparkConf);//用来设置日志级别
+		ctx.setLogLevel("WARN");
+		JavaStreamingContext jsc = new JavaStreamingContext(ctx,new Duration(5000));
 		
 		//创建kafka参数map
 		Map<String,String> params = new HashMap<String,String>();//kafka参数列表
-		params.put("metadata.broker.list", "zk1:9092,zk2:9092,zk3:9092");
+		params.put("metadata.broker.list", args[0]);
+		params.put("group.id", "46");//设置group id 也没有产生效果...... _seed
 		Set<String> topics = new HashSet<String>();//需要读取的topic的集合
 		topics.add("cs_finance");
 		JavaPairInputDStream<String,String> lines = KafkaUtils.createDirectStream(

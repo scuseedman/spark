@@ -90,7 +90,8 @@ public class SparkStreaming2Hbase {
   private static String tableName = "test";// args[3];
   private static String columnFamily = "cf";// args[4];
 
-  public static void main(String[] args) {
+  @SuppressWarnings("deprecation")
+public static void main(String[] args) {
 //    if (args.length == 0) {
 //      System.err
 //          .println("Usage: SparkStreamingFromFlumeToHBaseWindowingExample {master} {host} {port} {table} {columnFamily} {windowInSeconds} {slideInSeconds");
@@ -119,10 +120,11 @@ public class SparkStreaming2Hbase {
     JavaStreamingContext jssc =
         new JavaStreamingContext(sc, new Duration(2000));
 
-    final Broadcast<String> broadcastTableName =
-        jssc.sparkContext().broadcast(tableName);
-    final Broadcast<String> broadcastColumnFamily =
-        jssc.sparkContext().broadcast(columnFamily);
+    //共享变量？_seed
+//    final Broadcast<String> broadcastTableName =
+//        jssc.sparkContext().broadcast(tableName);
+//    final Broadcast<String> broadcastColumnFamily =
+//        jssc.sparkContext().broadcast(columnFamily);
 
     // JavaDStream<SparkFlumeEvent> flumeStream = sc.flumeStream(host, port);
 
@@ -138,51 +140,52 @@ public class SparkStreaming2Hbase {
 
     JavaDStream<String> lines =
         messages.map(new Function<Tuple2<String, String>, String>() {
-          @Override
+			private static final long serialVersionUID = 1L;
           public String call(Tuple2<String, String> tuple2) {
             return tuple2._2();
           }
         });
 
-    JavaDStream<String> words =
-        lines.flatMap(new FlatMapFunction<String, String>() {
-          @Override
-          public Iterable<String> call(String x) {
-            return Lists.newArrayList(SPACE.split(x));
-          }
-        });
+//    JavaDStream<String> words =
+//        lines.flatMap(new FlatMapFunction<String, String>() {
+//			private static final long serialVersionUID = 1L;
+//          public Iterable<String> call(String x) {
+//            return Lists.newArrayList(SPACE.split(x));
+//          }
+//        });
 
     JavaPairDStream<String, Integer> lastCounts =
         messages.map(new Function<Tuple2<String, String>, String>() {
-          @Override
+			private static final long serialVersionUID = 1L;
           public String call(Tuple2<String, String> tuple2) {
             return tuple2._2();
           }
         }).flatMap(new FlatMapFunction<String, String>() {
-          @Override
+			private static final long serialVersionUID = 1L;
           public Iterable<String> call(String x) {
             return Lists.newArrayList(SPACE.split(x));
           }
         }).mapToPair(new PairFunction<String, String, Integer>() {
-          @Override
+			private static final long serialVersionUID = 1L;
           public Tuple2<String, Integer> call(String s) {
             return new Tuple2<String, Integer>(s, 1);
           }
         }).reduceByKey(new Function2<Integer, Integer, Integer>() {
-
-          @Override
+			private static final long serialVersionUID = 1L;
           public Integer call(Integer x, Integer y) throws Exception {
-            // TODO Auto-generated method stub
             return x.intValue() + y.intValue();
           }
         });
     lastCounts.print();
     lastCounts
         .foreach(new Function2<JavaPairRDD<String, Integer>, Time, Void>() {
-          public Void call(JavaPairRDD<String, Integer> values, Time time)
+			private static final long serialVersionUID = 1L;
+
+		public Void call(JavaPairRDD<String, Integer> values, Time time)
               throws Exception {
             values.foreach(new VoidFunction<Tuple2<String, Integer>>() {
-              public void call(Tuple2<String, Integer> tuple) throws Exception {
+				private static final long serialVersionUID = 1L;
+			public void call(Tuple2<String, Integer> tuple) throws Exception {
             	  HbaseUtil.put_finance(tableName, "counter", columnFamily, tuple._1() + "", tuple._2() + "");
 //                HBaseCounterIncrementor incrementor = HBaseCounterIncrementor.getInstance(
 //                        broadcastTableName.value(),

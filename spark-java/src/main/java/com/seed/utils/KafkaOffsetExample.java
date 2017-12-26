@@ -67,6 +67,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.broadcast.Broadcast;
@@ -78,7 +79,9 @@ import org.apache.spark.streaming.kafka.HasOffsetRanges;
 import org.apache.spark.streaming.kafka.KafkaCluster;
 import org.apache.spark.streaming.kafka.KafkaUtils;
 import org.apache.spark.streaming.kafka.OffsetRange;
+
 import com.seed.config.Global;
+
 import kafka.common.TopicAndPartition;
 import kafka.message.MessageAndMetadata;
 import kafka.serializer.StringDecoder;
@@ -103,8 +106,6 @@ public class KafkaOffsetExample {
                 StringDecoder.class, StringDecoder.class, String.class, kafkaParamBroadcast.getValue(),
                 consumerOffsetsLong, new Function<MessageAndMetadata<String, String>, String>() {
                     private static final long serialVersionUID = 1L;
- 
-                    @Override
                     public String call(MessageAndMetadata<String, String> v1) throws Exception {
                         return v1.message();
                     }
@@ -153,6 +154,7 @@ public class KafkaOffsetExample {
             public JavaRDD<String> call(JavaRDD<String> rdd) throws Exception {
                 OffsetRange[] offsets = ((HasOffsetRanges) rdd.rdd()).offsetRanges();
                 offsetRanges.set(offsets);
+                //代码块报错。原因待查找 _seed
 //                for (int i = 0; i < offsets.length; i++)
 //                    KafkaOffsetExample.log.warn("topic : {}, partitions: {}, fromoffset: {}, untiloffset: {}",
 //                            offsets[i].topic(), offsets[i].partition(), offsets[i].fromOffset(),
@@ -229,7 +231,9 @@ public class KafkaOffsetExample {
         kafkaCluster = initKafkaCluster();
  
         SparkConf sparkConf = new SparkConf().setMaster("local[2]").setAppName("seed-in-spark");
-        JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, new Duration(5000));
+        JavaSparkContext jsc =  new JavaSparkContext(sparkConf);
+        jsc.setLogLevel("WARN");
+        JavaStreamingContext jssc = new JavaStreamingContext(jsc, new Duration(5000));
         
         // 得到rdd各个分区对应的offset, 并保存在offsetRanges中
         KafkaOffsetExample.log.warn("initConsumer Offset");

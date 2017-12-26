@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+# author : lwd
+# date : 20171226
+# echo the message to the kafka
+#使用shell脚本逐行读取文件数据作为kafka生产者
+while read line
+do
+echo $line
+echo $line | kafka-console-producer --topic cs_finance --broker-list \
+        test94.AAAA.com:9092,test94.AAAA.com:9092,test96.AAAA.com:9092
+# 发送消息的间隔时间
+sleep 120
+done<lianjia.csv
+
+

@@ -10,6 +10,7 @@
     <mybatis.spring.version>1.2.0</mybatis.spring.version>
     <mybatis.version>3.2.7</mybatis.version>
     <druid.version>1.0.13</druid.version>
+    <redis.clients.version>2.6.0</redis.clients.version>
   </properties>
   
   <dependencies>
@@ -116,6 +117,16 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.5.4</version>
 		</dependency>
+		<dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>${redis.clients.version}</version>
+    </dependency>
+    <dependency>
+	    <groupId>com.101tec</groupId>
+	  	<artifactId>zkclient</artifactId>
+	 	 <version>0.7</version>
+    </dependency>
 		<!-- 如果不想每次都写private  final Logger logger = LoggerFactory.getLogger(XXX.class); 可以用注解@Slf4j
 		<dependency>
 		    <groupId>org.projectlombok</groupId>

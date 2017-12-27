@@ -49,8 +49,8 @@
 */ 
 package com.seed.utils;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+//import org.springframework.context.ApplicationContext;
+//import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.seed.entity.WordCountEntity;
 import com.seed.service.WordCountService;
@@ -64,11 +64,11 @@ import com.seed.service.WordCountService;
  * @see       
  */
 public class MysqlUtils {
-    private static ApplicationContext app;
-    static {
-        app = new ClassPathXmlApplicationContext(new String[] { "classpath:spring/spring.xml", "classpath:spring/spring-mybatis.xml" });
-    }
-    WordCountService wcService = app.getBean(WordCountService.class);
+//    private static ApplicationContext app;
+//    static {
+//        app = new ClassPathXmlApplicationContext(new String[] { "classpath:spring/spring.xml", "classpath:spring/spring-mybatis.xml" });
+//    }
+//    WordCountService wcService = app.getBean(WordCountService.class);
 	/**
 	 * 数据写入mysql demo程序
 	 * @param word
@@ -76,7 +76,7 @@ public class MysqlUtils {
 	 */
 	public void put2table(String word, String count) {
 		// TODO Auto-generated method stub
-		wcService.insertWC(new WordCountEntity(word,Integer.valueOf(count)));
+//		wcService.insertWC(new WordCountEntity(word,Integer.valueOf(count)));
 	}
 
 }

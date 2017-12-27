@@ -41,6 +41,7 @@ public class WordCount {
         JavaRDD<String> logData = sc.textFile(logFile).cache();
         System.out.println("the total line is : " + logData.count());
         long aStartWith = logData.filter(new Function<String, Boolean>() {//点击进入eclipse被异常退出 seed
+			private static final long serialVersionUID = 1L;
 			public Boolean call(String s) throws Exception {
 				return s.split(" ")[0].startsWith("a");
 			}
@@ -48,6 +49,7 @@ public class WordCount {
         System.out.println("start with a ,the counts is : " + aStartWith);
         
         JavaRDD<String>  words = logData.flatMap(new FlatMapFunction<String, String>() {
+			private static final long serialVersionUID = 1L;
 			public Iterable<String> call(String s) throws Exception {
 				return Arrays.asList(s.split(" "));
 			}
@@ -57,14 +59,16 @@ public class WordCount {
         
         // (word,1)
         JavaPairRDD<String, Integer> counts = words.mapToPair(new PairFunction<String, String, Integer>() {
+			private static final long serialVersionUID = 1L;
 			public Tuple2<String, Integer> call(String s) throws Exception {
-				return new Tuple2(s,1);
+				return new Tuple2<String,Integer>(s,1);
 			}
 		});
         System.out.println("输出第二个JavaRDD ,每个词计数为1");
         System.out.println(counts);
         
         JavaPairRDD<String, Integer> totals = counts.reduceByKey(new Function2<Integer, Integer, Integer>() {
+			private static final long serialVersionUID = 1L;
 			public Integer call(Integer a1, Integer a2) throws Exception {
 				return a1 + a2 ;
 			}
@@ -75,5 +79,6 @@ public class WordCount {
         	System.out.println(tuple._1() + " : " + tuple._2());
         } 
         sc.stop();
+        sc.close();
 	}
 }

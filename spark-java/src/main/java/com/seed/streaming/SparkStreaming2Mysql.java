@@ -59,6 +59,7 @@ package com.seed.streaming;
 
 
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -78,24 +79,22 @@ import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+//import org.springframework.context.ApplicationContext;
+//import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import scala.Tuple2;
 
-import com.google.common.collect.Lists;
 import com.seed.entity.WordCountEntity;
 import com.seed.service.WordCountService;
-import com.seed.utils.MysqlUtils;
 
 public class SparkStreaming2Mysql {
   private static final Pattern SPACE = Pattern.compile(" ");
 
-  private static ApplicationContext app;
-  static {
-      app = new ClassPathXmlApplicationContext(new String[] { "classpath:spring/spring.xml", "classpath:spring/spring-mybatis.xml" });
-  }
-  private static WordCountService wcService = app.getBean(WordCountService.class);
+//  private static ApplicationContext app;
+//  static {
+//      app = new ClassPathXmlApplicationContext(new String[] { "classpath:spring/spring.xml", "classpath:spring/spring-mybatis.xml" });
+//  }
+//  private static WordCountService wcService = app.getBean(WordCountService.class);
   @SuppressWarnings("deprecation")
 public static void main(String[] args) {
 //    if (args.length == 0) {
@@ -110,7 +109,7 @@ public static void main(String[] args) {
     // int windowInSeconds = 3;// Integer.parseInt(args[5]);
     // int slideInSeconds = 1;// Integer.parseInt(args[5]);
 
-    String zkQuorum = "test94.com,test95.com,test96.com:2181/kafka";
+    String zkQuorum = args[0];
     String group = "47";
     String topicss = "cs_finance";
     String numThread = "2";
@@ -160,7 +159,7 @@ public static void main(String[] args) {
 			private static final long serialVersionUID = 1L;
 		@Override
           public Iterable<String> call(String x) {
-            return Lists.newArrayList(SPACE.split(x));
+            return Arrays.asList(SPACE.split(x));
           }
         }).mapToPair(new PairFunction<String, String, Integer>() {
 			private static final long serialVersionUID = 1L;
@@ -185,7 +184,7 @@ public static void main(String[] args) {
             values.foreach(new VoidFunction<Tuple2<String, Integer>>() {
 				private static final long serialVersionUID = 1L;
 			public void call(Tuple2<String, Integer> tuple) throws Exception {
-				wcService.insertWC(new WordCountEntity(tuple._1() + "",Integer.valueOf(tuple._2() + "")));
+//				wcService.insertWC(new WordCountEntity(tuple._1() + "",Integer.valueOf(tuple._2() + "")));
               }
             });
 

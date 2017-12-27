@@ -49,8 +49,8 @@
 */ 
 package com.seed.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
 
 import com.seed.dao.WordCountMapper;
 import com.seed.entity.WordCountEntity;
@@ -64,14 +64,14 @@ import com.seed.service.WordCountService;
  * @since    JDK 1.7
  * @see       
  */
-@Service
+//@Service
 public class WordCountServiceImpl implements WordCountService{
-	@Autowired(required=false)
-	private WordCountMapper wordCountMapper;
+//	@Autowired(required=false)
+//	private WordCountMapper wordCountMapper;
 	@Override
 	public void insertWC(WordCountEntity wordCountEntity) {
 		// TODO Auto-generated method stub
-		wordCountMapper.insertWC(wordCountEntity);
+//		wordCountMapper.insertWC(wordCountEntity);
 	}
 
 }

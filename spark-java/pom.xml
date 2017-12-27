@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.formax</groupId>
+  <groupId>com.seed</groupId>
   <artifactId>spark-java</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   
@@ -65,6 +65,11 @@
 		    <artifactId>htrace-core</artifactId>
     		<version>3.1.0-incubating</version>
 		</dependency>
+		<dependency>
+	      <groupId>mysql</groupId>
+	      <artifactId>mysql-connector-java</artifactId>
+	      <version>${mysql.version}</version>
+	    </dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
 	    <dependency>
 	      <groupId>org.apache.commons</groupId>
@@ -72,7 +77,7 @@
 	      <version>1.4</version>
 	    </dependency>
 	
-		<dependency>
+		<!-- <dependency>
 	      <groupId>org.springframework</groupId>
 	      <artifactId>spring-core</artifactId>
 	      <version>${spring.version}</version>
@@ -102,11 +107,7 @@
 	      <artifactId>mybatis-spring</artifactId>
 	      <version>${mybatis.spring.version}</version>
 	    </dependency>
-	    <dependency>
-	      <groupId>mysql</groupId>
-	      <artifactId>mysql-connector-java</artifactId>
-	      <version>${mysql.version}</version>
-	    </dependency>
+	    
 	    <dependency>
 	      <groupId>com.alibaba</groupId>
 	      <artifactId>druid</artifactId>
@@ -116,7 +117,7 @@
 			<groupId>aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>1.5.4</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
       <groupId>redis.clients</groupId>
       <artifactId>jedis</artifactId>
@@ -136,74 +137,5 @@
 		</dependency> -->
 
   </dependencies>
-   
-   <build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<targetPath>resources</targetPath>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.formax.wordcount.WordCount</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-
-						<manifestEntries>
-							<!-- 在Class-Path下添加配置文件的路径 -->
-							<Class-Path>./config/</Class-Path>
-						</manifestEntries>
-					</archive>
-					
-					<includes>
-						<!-- 打jar包时，只打包class文件 -->
-						<include>**/*.class</include>
-					</includes>
-					<classesDirectory>
-					</classesDirectory>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-
-			<!-- 拷贝依赖的jar包到lib目录 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>
-								${project.build.directory}/lib
-							</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<defaultLibBundleDir>lib</defaultLibBundleDir>
-					<source>1.7</source>
-					<target>1.7</target>
-					<encoding>UTF-8</encoding>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-
-		</plugins>
-	</build>
+ 
 </project>

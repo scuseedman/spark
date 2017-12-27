@@ -52,14 +52,12 @@
 package com.seed.config;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+
 /** 
  * ClassName:Global
- * Function: TODO ADD FUNCTION.  
- * Reason:   TODO ADD REASON. 
  * Date:     2017年12月25日 下午5:32:54 
  * @author   lwd 
  * @version   
@@ -74,8 +72,13 @@ public class Global {
     
     static {
         prop = new Properties();
+        String sysName = System.getProperty("os.name").toLowerCase();
+        String path = sysName.contains("windows")?"E:\\formax_workspace\\spark\\spark-java\\src\\main\\resources\\config\\config.properties"
+        		:"/data/formax_data/data_test/config/config.properties";
+        System.out.println("path ===> " + path);
+        Global.initConfig(path);
 //        classloader = Thread.currentThread().getContextClassLoader();
-//        in = classloader.getResourceAsStream("./config/config.properties");
+//        in = classloader.getResourceAsStream("/config/config.properties");
 //        try {
 //            prop.load(in);
 //        } catch (IOException e) {

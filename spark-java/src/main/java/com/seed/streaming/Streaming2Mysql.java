@@ -1,8 +1,6 @@
 package com.seed.streaming;
 
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,7 +60,7 @@ public class Streaming2Mysql {
 				String.class,
 				String.class,
 				StringDecoder.class,
-				StringDecoder.class, 
+				StringDecoder.class,
 				kafkaParams, 
 				topics);
 		JavaDStream<String> words = lines.flatMap(new FlatMapFunction<Tuple2<String,String>, String>() {

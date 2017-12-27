@@ -67,7 +67,7 @@ import java.util.Properties;
 public class Global {
 
     private static Properties prop;
-    private static ClassLoader classloader;
+//    private static ClassLoader classloader;
     private static InputStream in;
     
     static {

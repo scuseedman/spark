@@ -75,14 +75,17 @@ public class SimpleApp {
         JavaRDD<String> logData = sc.textFile(logFile).cache();
         System.out.println("the total line is : " + logData.count());
         long numAs = logData.filter(new Function<String, Boolean>() {
-            public Boolean call(String s) { return s.startsWith("a"); }
+			private static final long serialVersionUID = 1L;
+			public Boolean call(String s) { return s.startsWith("a"); }
         }).count();
 
         long numBs = logData.filter(new Function<String, Boolean>() {
-            public Boolean call(String s) { return s.contains("b"); }
+			private static final long serialVersionUID = 1L;
+			public Boolean call(String s) { return s.contains("b"); }
         }).count();
 
         System.out.println("Lines with a: " + numAs +",lines with b: " + numBs);
+        sc.close();
     }
 
 }

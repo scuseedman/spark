@@ -16,7 +16,6 @@ package com.seed.wordcount;
  */
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -74,7 +73,7 @@ public class WordCount {
 			}
 		});
         System.out.println("输出第三个JavaRDD ,每个词计数为1");
-        List<Tuple2<String, Integer>> output = totals.collect();
+//		List<Tuple2<String, Integer>> output = totals.collect();
         for(Tuple2<String,Integer> tuple :totals.collect()){
         	System.out.println(tuple._1() + " : " + tuple._2());
         } 

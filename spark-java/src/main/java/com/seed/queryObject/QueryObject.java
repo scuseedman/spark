@@ -79,7 +79,7 @@ public class QueryObject {
 		System.out.println(" ===> " + entity.getCount());
 	}
 
-	private static Object getResFromMysql(String sql,Class clazz) {
+	private static Object getResFromMysql(String sql,@SuppressWarnings("rawtypes") Class clazz) {
 		Connection connection = ConnectorPools.getConnection();
 		PreparedStatement ps = null;
 		ResultSet rs = null;

@@ -89,9 +89,9 @@ public class Streaming2MysqlServiceImpl {
 		try {
 			Connection connection = ConnectorPools.getConnection();
 			Tuple2<String,Integer> wordcount = null;
-			String insert = "insert ignore into test.wc_res (word,count) values (?,?)";
-			String select = "select word,count from test.wc_res where word=?";
-			String update = "update test.wc_res set count=count+? where word=?";
+			String insert = "insert ignore into test.wc_res (word,count) values (?,?)";//insert sql 
+			String select = "select word,count from test.wc_res where word=?";//select sql
+			String update = "update test.wc_res set count=count+? where word=?";// update sql 
 			while(wordcounts.hasNext()){
 				wordcount = wordcounts.next();
 				WordCountEntity entity = new WordCountEntity();

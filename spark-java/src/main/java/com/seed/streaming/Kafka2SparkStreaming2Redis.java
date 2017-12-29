@@ -54,7 +54,6 @@ package com.seed.streaming;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,7 +65,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.streaming.Duration;
@@ -77,13 +75,8 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
 
 import com.seed.service.impl.RedisServiceImpl;
-import com.seed.service.impl.Streaming2MysqlServiceImpl;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 import scala.Tuple2;
-import scala.collection.parallel.ParIterableLike.FlatMap;
 
 /** 
  * ClassName:Kafka2SparkStreaming2Redis
@@ -111,9 +104,10 @@ public class Kafka2SparkStreaming2Redis {
 	public static void kafka2Streaming2Redis(String brokerLists,String masterName,final String redisHost){
 		System.out.println(" ============>>> start ");
 		SparkConf sparkConf = new SparkConf().setAppName("kafka2streaming").setMaster(masterName);
+		sparkConf.set("spark.streaming.stopGracefullyOnShutdown","true");//设置钩子，使之可以优雅的关停掉这个sparkstreaming程序
 		JavaSparkContext ctx = new JavaSparkContext(sparkConf);
 		ctx.setLogLevel("WARN");
-		JavaStreamingContext jsc = new JavaStreamingContext(ctx,new Duration(10000));
+		JavaStreamingContext jsc = new JavaStreamingContext(ctx,new Duration(100000));//100s
 		Map<String,String> kafkaParams = new HashMap<String,String>();//kafka 需要的参数
 		kafkaParams.put("metadata.broker.list", brokerLists);
 		kafkaParams.put("group.id", "47");
@@ -132,7 +126,7 @@ public class Kafka2SparkStreaming2Redis {
 			private static final long serialVersionUID = 1L;
 			public Iterable<String> call(Tuple2<String, String> tuple)
 					throws Exception {
-				return Arrays.asList(tuple._2.split(" "));
+				return Arrays.asList(tuple._2.toLowerCase().split(" "));//转换为小写
 			}
 		});
 		JavaPairDStream< String, Integer> pairWord = words.mapToPair(new PairFunction<String, String, Integer>() {
@@ -156,11 +150,7 @@ public class Kafka2SparkStreaming2Redis {
 					private static final long serialVersionUID = 1L;
 					public void call(Tuple2<String, Integer> wordcount) throws Exception {
 						System.out.println(wordcount._1 + " ===>>> " + wordcount._2);
-						new RedisServiceImpl().putRes2Redis(wordcount,redisHost);
-//						JedisPool pool = new JedisPool(new JedisPoolConfig(), redisHost);
-//                        Jedis jedis = pool.getResource();
-//                        jedis.select(0);
-//                        jedis.set(wordcount._1(), wordcount._2().toString());
+						new RedisServiceImpl(redisHost).putRes2Redis(wordcount);
 					}
 				});
 				return null;

@@ -127,14 +127,13 @@ public class RedisServiceImpl {
 	 * @param wordcount
 	 * @param redisHost 
 	 */
-	public void putRes2Redis(Tuple2<String, Integer> wordcount, String redisHost) {
+	public void putRes2Redis(Tuple2<String, Integer> wordcount) {
 		System.out.println(" >>>>>=================<<<<<");
 		System.out.println("word >>>>>>> " + wordcount._1);
 		if(! shardedJedis.exists(wordcount._1)){//false 数据不存在,新增记录
 			shardedJedis.set(wordcount._1, wordcount._2 + "");
 		}else{//数据存在,更新
 			shardedJedis.set(wordcount._1, Integer.valueOf(shardedJedis.get(wordcount._1)) + wordcount._2 + "");
-			
 		}
 	}
 

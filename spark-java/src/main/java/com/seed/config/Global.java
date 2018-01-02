@@ -56,6 +56,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 
+
 /** 
  * ClassName:Global
  * Date:     2017年12月25日 下午5:32:54 
@@ -72,19 +73,25 @@ public class Global {
     
     static {
         prop = new Properties();
+        
         String sysName = System.getProperty("os.name").toLowerCase();
         String path = sysName.contains("windows")?"E:\\formax_workspace\\spark\\spark-java\\src\\main\\resources\\config\\config.properties"
         		:"/data/formax_data/data_test/shell-scripts/config.properties";
         //如果是这样加载方式，文件需要在集群的每台服务器上都存在。否则有些excutor会报空指针
+        
+//       String path = Global.class.getResource("/resources/config/config.properties").getPath();
         System.out.println("path ===> " + path);
+        
         Global.initConfig(path);
 //        classloader = Thread.currentThread().getContextClassLoader();
 //        in = classloader.getResourceAsStream("/config/config.properties");
-//        try {
+        try {
+//        	prop.load(new FileInputStream(path));
+//        	prop.load(Global.class.getResourceAsStream("config/config.properties"));
 //            prop.load(in);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     /**

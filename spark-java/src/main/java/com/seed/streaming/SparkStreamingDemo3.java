@@ -298,7 +298,10 @@ public class SparkStreamingDemo3 {
     public static void main(String[] args) throws Exception {
 //    	String path = "";
     	String masterName = "";
-    	System.out.println(" =========================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 程序启动了...");
+    	System.out.println(" ======>>>>> 程序启动，请确保配置文件存在于 ==>> /data/formax_data/data_test/shell-scripts/config.properties ...");
+    	System.out.println("===> " + Global.getConfVal("REDISHOST"));
+    	System.out.println("===> " + Global.getConfVal("KAFKA_TOPIC"));
+    	SparkStreamingDemo3.log.warn("======>>>>>> " + Global.getConfVal("REDISHOST"));
     	if(System.getProperty("os.name").toLowerCase().contains("windows")){
 //    		path = "E:\\formax_workspace\\spark\\spark-java\\src\\main\\resources\\config\\config.properties";
     		masterName = "local[2]";
@@ -306,7 +309,6 @@ public class SparkStreamingDemo3 {
 //    		path = "file:/data/formax_data/data_test/shell-scripts/config.properties";
     		masterName = "yarn-cluster";
     	}
-    	SparkStreamingDemo3.log.warn("======>>>>>> " + Global.getConfVal("REDISHOST"));
         SparkStreamingDemo3.run(masterName);
     }
 }

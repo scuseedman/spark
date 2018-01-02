@@ -199,7 +199,7 @@
           <includeProjectDependencies>true</includeProjectDependencies>
           <includePluginDependencies>false</includePluginDependencies>
           <classpathScope>compile</classpathScope>
-          <mainClass>com.seed.streaming.Kafka2SparkStreaming2Redis</mainClass>
+          <mainClass>com.seed.streaming.SparkStreamingDemo2</mainClass>
         </configuration>
       </plugin>
 

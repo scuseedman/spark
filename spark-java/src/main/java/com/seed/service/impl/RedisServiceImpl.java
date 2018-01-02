@@ -54,6 +54,8 @@ package com.seed.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.seed.config.Global;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -83,6 +85,9 @@ public class RedisServiceImpl {
 	}
 
 	public RedisServiceImpl(String redisHost) {
+		System.out.println("redisHost is : =========>>>>>>>>> " + redisHost);
+		redisHost = Global.getConfVal("REDISHOST");
+		System.out.println("redisHost is : =========>>>>>>>>> " + redisHost);
 		initialPool(redisHost); 
         initialShardedPool(redisHost); 
         shardedJedis = shardedJedisPool.getResource(); 

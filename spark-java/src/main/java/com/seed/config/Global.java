@@ -74,7 +74,8 @@ public class Global {
         prop = new Properties();
         String sysName = System.getProperty("os.name").toLowerCase();
         String path = sysName.contains("windows")?"E:\\formax_workspace\\spark\\spark-java\\src\\main\\resources\\config\\config.properties"
-        		:"/data/formax_data/data_test/config/config.properties";
+        		:"/data/formax_data/data_test/shell-scripts/config.properties";
+        //如果是这样加载方式，文件需要在集群的每台服务器上都存在。否则有些excutor会报空指针
         System.out.println("path ===> " + path);
         Global.initConfig(path);
 //        classloader = Thread.currentThread().getContextClassLoader();

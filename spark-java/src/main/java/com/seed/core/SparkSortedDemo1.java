@@ -52,10 +52,8 @@
 package com.seed.core;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import org.apache.spark.SparkConf;
@@ -66,10 +64,11 @@ import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.api.java.function.VoidFunction;
 
 import scala.Tuple2;
 
-import com.seed.entity.Lianjia_sh;
+import com.seed.entity.Lianjia_sh1;
 
 /** 
  * ClassName:SparkSortedDemo1
@@ -98,44 +97,58 @@ public class SparkSortedDemo1 implements Serializable{
 			}
 		});
 		System.out.println(lines.count());
-		JavaRDD<Lianjia_sh> entities = lines.flatMap(new FlatMapFunction<String, Lianjia_sh>() {
+		JavaRDD<Lianjia_sh1> entities = lines.flatMap(new FlatMapFunction<String, Lianjia_sh1>() {
 			private static final long serialVersionUID = 1L;
-			public Iterable<Lianjia_sh> call(String line)
+			public Iterable<Lianjia_sh1> call(String line)
 					throws Exception {
-				return Arrays.asList(new Lianjia_sh(line));
+				return Arrays.asList(new Lianjia_sh1(line));
 			}
 		});
 		System.out.println(entities.count());
-		JavaPairRDD<String, Lianjia_sh>  communities = entities.mapToPair(new PairFunction<Lianjia_sh, String, Lianjia_sh>() {
+		JavaPairRDD<String, Lianjia_sh1>  communities = entities.mapToPair(new PairFunction<Lianjia_sh1, String, Lianjia_sh1>() {
 			private static final long serialVersionUID = 1L;
-			public Tuple2<String, Lianjia_sh> call(Lianjia_sh entity)
+			public Tuple2<String, Lianjia_sh1> call(Lianjia_sh1 entity)
 					throws Exception {
-				return new Tuple2<String, Lianjia_sh>(entity.getCommunityName(),entity);
+				return new Tuple2<String, Lianjia_sh1>(entity.getCommunityName(),entity);
 			}
 		});
 		System.out.println(communities.count());
-		JavaPairRDD<String, Lianjia_sh> res = communities.reduceByKey(new Function2<Lianjia_sh, Lianjia_sh, Lianjia_sh>() {
+		JavaPairRDD<String, Lianjia_sh1> res = communities.reduceByKey(new Function2<Lianjia_sh1, Lianjia_sh1, Lianjia_sh1>() {
 			private static final long serialVersionUID = 1L;
-			public Lianjia_sh call(Lianjia_sh entity1, Lianjia_sh entity2)
+			public Lianjia_sh1 call(Lianjia_sh1 entity1, Lianjia_sh1 entity2)
 					throws Exception {
 				entity1.setTotalPrice(entity1.getTotalPrice() + entity2.getTotalPrice());
 				return entity1;
 			}
 		});
-		JavaRDD<Integer>  result = res.map(new Function<Tuple2<String,Lianjia_sh>, Integer>() {
+		JavaPairRDD<String, Iterable<Lianjia_sh1>>  result = res.groupByKey();//group by key
+		result.foreach(new VoidFunction<Tuple2<String,Iterable<Lianjia_sh1>>>() {
 			private static final long serialVersionUID = 1L;
-			public Integer call(Tuple2<String, Lianjia_sh> tuple)
+			public void call(Tuple2<String, Iterable<Lianjia_sh1>> tuple)
 					throws Exception {
-				return tuple._2.getTotalPrice();
+				// TODO Auto-generated method stub
+				System.out.println("group ===>>> " + tuple._1);
+				Iterator<Lianjia_sh1> its = tuple._2.iterator();//java迭代器
+				while(its.hasNext()){
+					Lianjia_sh1 sh = its.next();
+					System.out.println(" value ===>> " + sh.getRoomNum() + " ===> " + sh.getDesc());
+				} 
 			}
 		});
-		List<Integer> finalres = result.take(100);
-		for(Integer num : finalres ){
-			System.out.println(" ===>>>  " + num);
-		}
+//		JavaRDD<Integer>  result = res.map(new Function<Tuple2<String,Lianjia_sh>, Integer>() {
+//			private static final long serialVersionUID = 1L;
+//			public Integer call(Tuple2<String, Lianjia_sh> tuple)
+//					throws Exception {
+//				return tuple._2.getTotalPrice();
+//			}
+//		});
+//		List<Integer> finalres = result.take(100);
+//		for(Integer num : finalres ){
+//			System.out.println(" ===>>>  " + num);
+//		}
 		jsc.close();
 	}
-	
+	// 需要借两本书；1、redis入门 ；2、spark大数据编程
 	public static void main(String[] args) {
 		String masterName = System.getProperty("os.name").toLowerCase().contains("windows") ?"local[1]":"yarn-cluster";//seed
 		new SparkSortedDemo1().sortedSparkCount(masterName, args[0]);//master,inputfile

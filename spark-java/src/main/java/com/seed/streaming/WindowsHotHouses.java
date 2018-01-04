@@ -242,13 +242,14 @@ public class WindowsHotHouses implements Serializable{
 		sparkConf.set("spark.streaming.stopGracefullyOnShutdown","true");
 		JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 		jsc.setLogLevel("WARN");
-		JavaStreamingContext sc = new JavaStreamingContext(jsc,new Duration(2000));
+		JavaStreamingContext sc = new JavaStreamingContext(jsc,new Duration(10000));
 		log.warn("init comsumer offset !!");
 		Map<TopicAndPartition, Long> consumerOffsetsLong = initConsumerOffset(Global.getConfVal("KAFKA_TOPIC"));
 		kafkaParamBroadcast = sc.sparkContext().broadcast(kafkaParam);
 		JavaInputDStream<String> message = createKafkaDStream(sc, consumerOffsetsLong);
 		final AtomicReference<OffsetRange[]> offsetRanges = new AtomicReference<OffsetRange[]>();
 		JavaDStream<String> javaDStream = getAndUpdateKafkaOffset(message,offsetRanges);
+		
 		//开始处理逻辑
 		JavaDStream<String>  words = javaDStream.flatMap(new FlatMapFunction<String, String>() {
 			private static final long serialVersionUID = 1L;
@@ -273,7 +274,6 @@ public class WindowsHotHouses implements Serializable{
 			private static final long serialVersionUID = 1L;
 			public JavaPairRDD<String, Integer> call(
 					JavaPairRDD<String, Integer> w_words) throws Exception {
-				// TODO Auto-generated method stub
 				//本来是(word,1)的结果，对结果进行反转，也就是将会变成(1,word)的结构
 				JavaPairRDD<Integer, String>  r_words = w_words.mapToPair(new PairFunction<Tuple2<String,Integer>, Integer, String>() {
 					private static final long serialVersionUID = 1L;
@@ -291,13 +291,18 @@ public class WindowsHotHouses implements Serializable{
 						return new Tuple2<String,Integer>(tuple._2,tuple._1);
 					}
 				});
-				List<Tuple2<String, Integer>>  lists = n_words.take(10);//取出前10的热词
+				List<Tuple2<String, Integer>>  lists = n_words.take(3);//取出前10的热词
 				for(Tuple2<String,Integer> tuple:lists){
 					System.out.println(tuple._1 + " ---===>>> " + tuple._2);
 				}
 				return w_words;
 			}
 		});
+		// 这个无关紧要，只是为了触发job的执行，所以必须有output操作
+		 System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ====================  start");
+		 windows.print();
+		 System.out.println(" ==================== <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  end");
+		 
 		sc.start();
 		sc.awaitTermination();
 		sc.close();

@@ -51,6 +51,8 @@
 */ 
 package com.seed.entity;
 
+import scala.math.Ordered;
+
 
 
 /** 
@@ -62,7 +64,7 @@ package com.seed.entity;
  * @since    JDK 1.7
  * @see       
  */
-public class Lianjia_sh implements Comparable<Lianjia_sh>{
+public class Lianjia_sh implements Ordered<Lianjia_sh>, Comparable<Lianjia_sh>{
 	private String communityName;
 	private String roomNum;
 	private String squarts;
@@ -147,9 +149,112 @@ public class Lianjia_sh implements Comparable<Lianjia_sh>{
 		this.desc = line.split(SPLIT)[7];
 	}
 	@Override
-	public int compareTo(Lianjia_sh o) {
-		if(this.totalPrice - o.totalPrice > 0)return 1;
-		return 0;
+	public int compareTo(Lianjia_sh other) {
+		return other.getTotalPrice() - this.totalPrice;//价高排位高,sort排序这个对象的时候需要实现这个方法
+	}
+	@Override
+	public boolean $greater(Lianjia_sh other) {//大于
+		if(this.communityName.length() < other.getCommunityName().length()){
+			return true;
+		}else if(this.communityName.length() == other.getCommunityName().length() && this.totalPrice > other.totalPrice){
+			return true;
+		}
+		return false;
+	}
+	@Override
+	public boolean $greater$eq(Lianjia_sh other) {
+		if(this.communityName.length() < other.getCommunityName().length()){
+			return true;
+		}else if(this.communityName.length() == other.getCommunityName().length() && this.totalPrice >= other.totalPrice){
+			return true;
+		}
+		return false;
+	}
+	@Override
+	public boolean $less(Lianjia_sh other) {
+		if(this.communityName.length() > other.getCommunityName().length()){
+			return true;
+		}else if(this.communityName.length() == other.getCommunityName().length() && this.totalPrice < other.totalPrice){
+			return true;
+		}
+		return false;
+	}
+	@Override
+	public boolean $less$eq(Lianjia_sh other) {
+		if(this.communityName.length() > other.getCommunityName().length()){
+			return true;
+		}else if(this.communityName.length() == other.getCommunityName().length() && this.totalPrice <= other.totalPrice){
+			return true;
+		}
+		return false;
+	}
+	@Override
+	public int compare(Lianjia_sh other) {
+		return this.totalPrice - other.getTotalPrice();
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((Floor == null) ? 0 : Floor.hashCode());
+		result = prime * result + ((Toward == null) ? 0 : Toward.hashCode());
+		result = prime * result
+				+ ((communityName == null) ? 0 : communityName.hashCode());
+		result = prime * result + ((desc == null) ? 0 : desc.hashCode());
+		result = prime * result + ((roomNum == null) ? 0 : roomNum.hashCode());
+		result = prime * result + ((squarts == null) ? 0 : squarts.hashCode());
+		result = prime * result + totalPrice;
+		result = prime * result
+				+ ((unitPrice == null) ? 0 : unitPrice.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Lianjia_sh other = (Lianjia_sh) obj;
+		if (Floor == null) {
+			if (other.Floor != null)
+				return false;
+		} else if (!Floor.equals(other.Floor))
+			return false;
+		if (Toward == null) {
+			if (other.Toward != null)
+				return false;
+		} else if (!Toward.equals(other.Toward))
+			return false;
+		if (communityName == null) {
+			if (other.communityName != null)
+				return false;
+		} else if (!communityName.equals(other.communityName))
+			return false;
+		if (desc == null) {
+			if (other.desc != null)
+				return false;
+		} else if (!desc.equals(other.desc))
+			return false;
+		if (roomNum == null) {
+			if (other.roomNum != null)
+				return false;
+		} else if (!roomNum.equals(other.roomNum))
+			return false;
+		if (squarts == null) {
+			if (other.squarts != null)
+				return false;
+		} else if (!squarts.equals(other.squarts))
+			return false;
+		if (totalPrice != other.totalPrice)
+			return false;
+		if (unitPrice == null) {
+			if (other.unitPrice != null)
+				return false;
+		} else if (!unitPrice.equals(other.unitPrice))
+			return false;
+		return true;
 	}
 	
 	

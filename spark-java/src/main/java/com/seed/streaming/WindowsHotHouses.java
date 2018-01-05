@@ -242,7 +242,7 @@ public class WindowsHotHouses implements Serializable{
 		sparkConf.set("spark.streaming.stopGracefullyOnShutdown","true");
 		JavaSparkContext jsc = new JavaSparkContext(sparkConf);
 		jsc.setLogLevel("WARN");
-		JavaStreamingContext sc = new JavaStreamingContext(jsc,new Duration(10000));
+		JavaStreamingContext sc = new JavaStreamingContext(jsc,new Duration(5000));
 		log.warn("init comsumer offset !!");
 		Map<TopicAndPartition, Long> consumerOffsetsLong = initConsumerOffset(Global.getConfVal("KAFKA_TOPIC"));
 		kafkaParamBroadcast = sc.sparkContext().broadcast(kafkaParam);
@@ -268,7 +268,7 @@ public class WindowsHotHouses implements Serializable{
 			public Integer call(Integer v1, Integer v2) throws Exception {
 				return v1 + v2;
 			}
-		}, Durations.seconds(60),Durations.seconds(10));
+		}, Durations.seconds(600),Durations.seconds(20));
 		 //每10s处理前面60s的数据；该60s的数据将会一个RDD，对这个rdd进行操作
 		 JavaPairDStream<String, Integer>  windows = w_words.transformToPair(new Function<JavaPairRDD<String,Integer>, JavaPairRDD<String,Integer>>() {
 			private static final long serialVersionUID = 1L;
@@ -295,7 +295,7 @@ public class WindowsHotHouses implements Serializable{
 				for(Tuple2<String,Integer> tuple:lists){
 					System.out.println(tuple._1 + " ---===>>> " + tuple._2);
 				}
-				return w_words;
+				return n_words;
 			}
 		});
 		// 这个无关紧要，只是为了触发job的执行，所以必须有output操作

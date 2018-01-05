@@ -52,6 +52,7 @@
 package com.seed.service.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.seed.config.Global;
@@ -78,20 +79,20 @@ public class RedisServiceImpl {
     private JedisPool jedisPool;//非切片连接池
     private ShardedJedis shardedJedis;//切片额客户端连接
     private ShardedJedisPool shardedJedisPool;//切片连接池
-    
+    private static int nums = 0;
     
 	public RedisServiceImpl() {
 		super();
 	}
 
 	public RedisServiceImpl(String redisHost) {
-		System.out.println("redisHost is : =========>>>>>>>>> " + redisHost);
+		nums += 1;
 		redisHost = Global.getConfVal("REDISHOST");
-		System.out.println("redisHost is : =========>>>>>>>>> " + redisHost);
 		initialPool(redisHost); 
         initialShardedPool(redisHost); 
         shardedJedis = shardedJedisPool.getResource(); 
         jedis = jedisPool.getResource(); 
+        System.out.println(" ======.>>>>>>>>> 初始化了 " + nums + " 次连接 ");
 	}
 
 	/**
@@ -139,6 +140,14 @@ public class RedisServiceImpl {
 			shardedJedis.set(wordcount._1, wordcount._2 + "");
 		}else{//数据存在,更新
 			shardedJedis.set(wordcount._1, Integer.valueOf(shardedJedis.get(wordcount._1)) + wordcount._2 + "");
+		}
+	}
+
+	//批量操作
+	public void putIteratorRes2Redis(Iterator<Tuple2<String, Integer>> iterator) {
+		while(iterator.hasNext()){
+			System.out.println(" ====== <<<<<<>>>>>> ====== " );
+			putRes2Redis(iterator.next());
 		}
 	}
 

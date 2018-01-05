@@ -62,6 +62,7 @@ package com.seed.streaming;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -106,6 +107,7 @@ public class SparkStreamingDemo3 {
     private static scala.collection.immutable.Set<String> immutableTopics = null;
     private static Logger log = Logger.getLogger(SparkStreamingDemo3.class);
     private static final String redisHost = Global.getConfVal("REDISHOST");
+    private static final Integer INTERVAL = 20000;//数据接收频率，毫秒数
  
     /** * Create the Kafka Stream Directly With Offset in ZK * * @param jssc * SparkStreamContext * @param consumerOffsetsLong * Save the Offset of Kafka Topic * @return */
     private static JavaInputDStream<String> createKafkaDStream(JavaStreamingContext jssc,
@@ -166,11 +168,11 @@ public class SparkStreamingDemo3 {
             public JavaRDD<String> call(JavaRDD<String> rdd) throws Exception {
                 OffsetRange[] offsets = ((HasOffsetRanges) rdd.rdd()).offsetRanges();
                 offsetRanges.set(offsets);
-                //代码块报错。原因待查找 _seed
+                //代码已经改正 _seed
 //                for (int i = 0; i < offsets.length; i++)
-//                    KafkaOffsetExample.log.warn("topic : {}, partitions: {}, fromoffset: {}, untiloffset: {}",
-//                            offsets[i].topic(), offsets[i].partition(), offsets[i].fromOffset(),
-//                            offsets[i].untilOffset());
+//                    log.warn("topic : {" +offsets[i].topic() + "}, partitions: {" + offsets[i].partition() 
+//                    		+ "}, fromoffset: {" + offsets[i].fromOffset() + "}, untiloffset: {" + offsets[i].untilOffset() + "}"
+//                            );
                 return rdd;
             }
         });
@@ -247,7 +249,7 @@ public class SparkStreamingDemo3 {
         sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");//设置spark 实体类序列化的类
         JavaSparkContext jsc =  new JavaSparkContext(sparkConf);
         jsc.setLogLevel("WARN");
-        JavaStreamingContext jssc = new JavaStreamingContext(jsc, new Duration(5000));
+        JavaStreamingContext jssc = new JavaStreamingContext(jsc, new Duration(INTERVAL));
         
         // 得到rdd各个分区对应的offset, 并保存在offsetRanges中
         SparkStreamingDemo3.log.warn("initConsumer Offset");
@@ -276,23 +278,48 @@ public class SparkStreamingDemo3 {
 				return count1 + count2;
 			}
 		});
-        
          res.foreachRDD(new Function<JavaPairRDD<String,Integer>, Void>() {
  			private static final long serialVersionUID = 1L;
  			public Void call(JavaPairRDD<String, Integer> rdd) throws Exception {
- 				rdd.foreach(new VoidFunction<Tuple2<String,Integer>>() {
- 					private static final long serialVersionUID = 1L;
- 					public void call(Tuple2<String, Integer> wordcount) throws Exception {
- 						System.out.println(wordcount._1 + " ===>>> " + wordcount._2);
- 						SparkStreamingDemo3.log.warn( " ========>>>>>>>  redisHost is :  " + redisHost);
- 						new RedisServiceImpl(redisHost).putRes2Redis(wordcount);
- 					}
- 				});
+ 				rdd.foreachPartition(new VoidFunction<Iterator<Tuple2<String,Integer>>>() {
+					private static final long serialVersionUID = 1L;
+					public void call(Iterator<Tuple2<String, Integer>> wordcount)
+							throws Exception {
+						boolean flag = false;//因为每个partitions都进来,所以需要适当进行判断是否应该执行连接操作 _seed
+						while(wordcount.hasNext()){
+							System.out.println("===============>>>>> 该时段结果不为空，执行连接池操作");
+							flag = true;
+							break;
+						}
+						if(flag){
+							new RedisServiceImpl(redisHost).putIteratorRes2Redis(wordcount);
+						}else{
+							System.out.println("<<<<<<<========== 该时段结果为空，不执行连接池操作");
+						}
+					}
+ 					
+				});
+ 				
+ 				/**
+ 				 * foreachPartition 与 foreach使用的正确姿势:当需要创建连接的时候,应当使用foreachPartition ,该action操作将会在每个partition上建立一个连接而不是每一
+ 				 * 条数据;而如果使用foreach的action操作,将会每条数据都执行一次使用连接操作,将会相当浪费性能;
+ 				 * 而另外一个foreachPartition缺点是,如果当一个partition的数据达到相当大的时候,使用一个连接将会极度消耗时间.如果权衡考虑 _seed
+ 				 */
+ 				
+// 				rdd.foreach(new VoidFunction<Tuple2<String,Integer>>() {//action操作，只能真正执行action操作，job才真正提交。前面的操作都是lazy的
+// 					private static final long serialVersionUID = 1L;
+// 					public void call(Tuple2<String, Integer> wordcount) throws Exception {
+// 						System.out.println(wordcount._1 + " ===>>> " + wordcount._2);
+// 						//当使用foreach 的action的时候,如果wordcount没有数据进来,则程序没有进入这里进行操作连接持久化操作 _seed
+// 						new RedisServiceImpl(redisHost).putRes2Redis(wordcount);
+// 					}
+// 				});
  				return null;
  			}
  		});
         jssc.start();
         jssc.awaitTermination();
+        jssc.stop();
     }
      
     public static void main(String[] args) throws Exception {

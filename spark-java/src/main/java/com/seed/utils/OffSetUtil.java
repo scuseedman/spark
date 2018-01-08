@@ -51,7 +51,6 @@
 */ 
 package com.seed.utils;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -91,7 +90,6 @@ import com.seed.config.Global;
  * @see       
  */
 public class OffSetUtil {
-	private static final long serialVersionUID = 1L;
 	private static scala.collection.immutable.Set<String> immutableTopics = null;
 	private static Logger log = Logger.getLogger(OffSetUtil.class);
 	public static Map<String, String> initKafkaParams() {

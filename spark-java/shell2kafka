@@ -11,5 +11,44 @@ echo $line | kafka-console-producer --topic cs_finance --broker-list \
 # 发送消息的间隔时间
 sleep 120
 done<lianjia.csv
+----------------
+#!/usr/bin/bash
+# zhangfei + i 
+i=1
+# 数据不要不要的。不能推入太多数据进入kafka，否则开发环境将会呵呵哒！！！
+while(( i <= 700 ))  
+do  
+     res=$(python -c 'import random;print random.randint(12,18)')
+     echo $res
+     echo "zhangfei_$res">>../sanguoyanyi
+     echo "zhangfei_$res" | kafka-console-producer --topic cs_finance --broker-list \
+       test94.AAAA.com:9092,test95.AAAA.com:9092,test96.AAAA.com:9092
+     let "i += 1"     
+     echo "i is : $i"
+     sleep 2
+done  
+  
+echo "sum=$i" 
+
+a.partner_no,a.comp_name,a.comp_addr,b.d_name,c.d_name,a.comp_mobile,a.comp_phone,a.cate_pid,a.cat_id,a.comp_manager,a.sc_pid,a.sc_id,a.area_id,add_datetime,main_goods
+CREATE TABLE p_res (
+  partner_no varchar(500) DEFAULT NULL,
+  comp_name varchar(500) DEFAULT NULL, 
+  comp_addr varchar(500) DEFAULT NULL,
+  sc_pname varchar(500) DEFAULT NULL,
+  sc_name varchar(500) DEFAULT NULL,
+  comp_mobile varchar(500) DEFAULT NULL,
+  comp_phone varchar(500) DEFAULT NULL,
+  cate_pid int(11) DEFAULT NULL,
+  cat_id int(11) DEFAULT NULL,
+  comp_manager varchar(500) DEFAULT NULL,
+  sc_pid int(11) DEFAULT NULL,
+  sc_id int(11) DEFAULT NULL,
+  area_id int(11) DEFAULT NULL,
+  add_datetime varchar(500) DEFAULT NULL,
+  main_goods varchar(500) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
+insert into p_res select a.partner_no,a.comp_name,a.comp_addr,b.d_name,c.d_name,a.comp_mobile,a.comp_phone,a.cate_pid,a.cat_id,a.comp_manager,a.sc_pid,a.sc_id,a.area_id,a.add_datetime,a.main_goods
+	from anl_partner a left join state_city b on a.sc_pid=b.sc_id  left join state_city c on a.sc_id=c.sc_id  ;

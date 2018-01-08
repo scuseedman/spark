@@ -80,7 +80,7 @@ import com.seed.config.Global;
 import com.seed.utils.OffSetUtil;
 
 /** 
- * ClassName:UpdateStateByKeyZhangfei
+ * ClassName:UpdateStateByKey
  * Date:     2018年1月5日 下午3:22:45 
  * DESC:	
  * @author   lwd 

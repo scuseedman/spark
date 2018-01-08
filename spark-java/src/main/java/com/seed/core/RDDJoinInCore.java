@@ -187,14 +187,12 @@ public class RDDJoinInCore {
 	public static void main(String[] args) {
 		System.out.println(System.currentTimeMillis());
 		String masterName = System.getProperty("os.name").toLowerCase().contains("windows")?"local[4]":"yarn-cluster";
-//		if(args.length != 3){
-//			System.exit(1);
-//		}
-		String partnerPath = "F:\\deal_data_msh\\p_res.txt";
-//		partnerPath = args[0];
-		String mobilePath = "F:\\bm_hdfs\\20161128\\mobiles_20161125\\l_date=2016-11-27\\00000*";
-//		mobilePath = args[1];
-//		String outPath = args[2];
+		if(args.length != 3){
+			System.exit(1);
+		}
+		String partnerPath = args[0];
+		String mobilePath = args[1];
+		String outPath = args[2];
 		rddJoin( masterName,partnerPath,mobilePath);
 		System.out.println(System.currentTimeMillis());
 	}

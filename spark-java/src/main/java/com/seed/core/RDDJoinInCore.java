@@ -51,7 +51,10 @@
 */ 
 package com.seed.core;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import io.netty.util.internal.StringUtil;
 
@@ -67,6 +70,7 @@ import org.apache.spark.api.java.function.VoidFunction;
 import com.google.common.base.Optional;
 import com.seed.entity.MobileEntity;
 import com.seed.entity.PartnerEntity;
+import com.seed.utils.IOUtil;
 
 import scala.Tuple2;
 
@@ -137,18 +141,25 @@ public class RDDJoinInCore {
 		});
 		
 		JavaPairRDD<String, Tuple2<PartnerEntity, MobileEntity>>  joined_res = pair_entity_partners.join(pair_entity_mobiles);
-		joined_res.foreachPartition(new VoidFunction<Iterator<Tuple2<String,Tuple2<PartnerEntity,MobileEntity>>>>() {
-			private static final long serialVersionUID = 1L;
-			public void call(
-					Iterator<Tuple2<String, Tuple2<PartnerEntity, MobileEntity>>> its)
-					throws Exception {
-				while(its.hasNext()){
-					Tuple2<String, Tuple2<PartnerEntity, MobileEntity>> tuple = its.next();
-//					System.out.println(tuple._1 + " ===>>> " + tuple._2._1.toString() + " <<<=== " + tuple._2._2.toString());
-					System.out.println(tuple._2._2.getMobile() + " >>>=== " + tuple._2._1.toString());
-				}
-			}
-		});
+//		joined_res.foreachPartition(new VoidFunction<Iterator<Tuple2<String,Tuple2<PartnerEntity,MobileEntity>>>>() {
+//			private static final long serialVersionUID = 1L;
+//			public void call(
+//					Iterator<Tuple2<String, Tuple2<PartnerEntity, MobileEntity>>> its)
+//					throws Exception {
+////				List<Tuple2<PartnerEntity, MobileEntity>> list = new ArrayList<Tuple2<PartnerEntity, MobileEntity>>();
+//				List<String> list = new ArrayList<String>();
+//				while(its.hasNext()){
+//					Tuple2<String, Tuple2<PartnerEntity, MobileEntity>> tuple = its.next();
+//					list.add(tuple._2._2.getMobile() + "|" + tuple._2._1.getPartner_no() + "|" + tuple._2._1.getSc_pname() +
+//						"|" + tuple._2._1.getSc_name() + "|" + tuple._2._1.getSc_pid() + "|" + tuple._2._1.getSc_id());//将这个集合写入文件中
+//					
+////					System.out.println(tuple._2._2.getMobile() + " >>>=== " + tuple._2._1.toString());
+//				}
+//				IOUtil.saveCollection(list, new File("F:\\deal_data_msh\\final_file_000003_0.txt"));
+//				
+//			}
+//		});
+		joined_res.saveAsTextFile("F:\\deal_data_msh\\final_files");
 		//inner join 内关联
 //		JavaPairRDD<String, Tuple2<String, String>>  join_rdd = pair_partners.join(pair_mobiles);//基于key的两个行数据关联在一起了 _seed
 //		join_rdd.foreach(new VoidFunction<Tuple2<String,Tuple2<String,String>>>() {
@@ -174,11 +185,15 @@ public class RDDJoinInCore {
 		jsc.close();
 	}
 	public static void main(String[] args) {
-		String masterName = System.getProperty("os.name").toLowerCase().contains("windows")?"local[2]":"yarn-cluster";
-		String partnerPath = "E:\\work\\otherfiles\\p_res.txt";
-		partnerPath = args[0];
-		String mobilePath = "E:\\deal_data\\mobile_demo.txt";
-		mobilePath = args[1];
+		System.out.println(System.currentTimeMillis());
+		String masterName = System.getProperty("os.name").toLowerCase().contains("windows")?"local[4]":"yarn-cluster";
+		if(args.length != 3){
+			System.exit(1);
+		}
+		String partnerPath = args[0];
+		String mobilePath = args[1];
+		String outPath = args[2];
 		rddJoin( masterName,partnerPath,mobilePath);
+		System.out.println(System.currentTimeMillis());
 	}
 }

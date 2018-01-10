@@ -84,7 +84,7 @@ public class MobiDeal implements Serializable{
 		JavaRDD<String> map_mob = lines.map(new Function<String, String>() {
 			private static final long serialVersionUID = 1L;
 			public String call(String line) throws Exception {
-				return line.split("\t")[0] + "_" + line.split("\t")[3];
+				return line.split("\t")[1] + "_" + line.split("\t")[3];
 			}
 		});
 		JavaRDD<String>  distinct_mob = map_mob.distinct();//去重 mob数据
@@ -130,6 +130,7 @@ public class MobiDeal implements Serializable{
 
 	public static void main(String[] args) {
 		String masterName = System.getProperty("os.name").toLowerCase().contains("windows")?"local[2]":"yarn-cluster";
+		if(args.length != 3)System.exit(1);
 		String inpath = args[0];
 		String outpath = args[1];
 		String p_inpath = args[2];

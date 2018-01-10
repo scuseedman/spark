@@ -66,7 +66,8 @@ import scala.Tuple2;
  * ClassName:MobiDeal
  * Date:     2018年1月10日 上午11:18:26 
  * DESC:	deal mobile；mobiles => deal mobiles => partners => join => distinct => group => output
- * @author   lwd 
+ * not test in !!
+ * @author   seed 
  * @version   
  * @since    JDK 1.7
  * @see       

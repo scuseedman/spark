@@ -30,7 +30,7 @@ public class DistinctMobiles implements Serializable{
 //		});
 		JavaRDD<String> d_lines = lines.distinct();//对数据进行去重操作
 		System.out.println("count of d_lines ===>>> " + d_lines.count());
-		d_lines.saveAsTextFile("F:\\deal_data_msh\\distinct_mobiles\\20180110_0026");
+		d_lines.saveAsTextFile("");
 		System.exit(1);
 //		JavaPairRDD<String, Integer>  reduce_mobiles = pair_mobiles.reduceByKey(new Function2<Integer, Integer, Integer>() {
 //			private static final long serialVersionUID = 1L;

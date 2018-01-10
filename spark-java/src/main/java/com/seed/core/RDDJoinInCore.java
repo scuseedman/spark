@@ -159,7 +159,7 @@ public class RDDJoinInCore {
 //				
 //			}
 //		});
-		joined_res.saveAsTextFile("F:\\deal_data_msh\\final_files");
+		joined_res.saveAsTextFile("");
 		//inner join 内关联
 //		JavaPairRDD<String, Tuple2<String, String>>  join_rdd = pair_partners.join(pair_mobiles);//基于key的两个行数据关联在一起了 _seed
 //		join_rdd.foreach(new VoidFunction<Tuple2<String,Tuple2<String,String>>>() {

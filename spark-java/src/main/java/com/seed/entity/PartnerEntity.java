@@ -197,7 +197,7 @@ public class PartnerEntity implements Serializable{
 	}
 	//基于字符串构造对象
 	public PartnerEntity(String line) {
-		this.partner_no = line.split("\\|")[0];
+		this.partner_no = line.split("\\|")[0].toLowerCase();
 		this.comp_name =  line.split("\\|")[1];
 		this.comp_addr =  line.split("\\|")[2];
 		this.sc_pname =  line.split("\\|")[3];
@@ -219,7 +219,6 @@ public class PartnerEntity implements Serializable{
 		sb.append(this.partner_no).append(SPLIT);
 		sb.append(this.comp_name).append(SPLIT);
 		sb.append(this.comp_addr).append(SPLIT);
-		sb.append(this.sc_pname).append(SPLIT);
 		sb.append(this.sc_name).append(SPLIT);
 		sb.append(this.comp_mobile).append(SPLIT);
 		sb.append(this.comp_phone).append(SPLIT);
@@ -230,7 +229,8 @@ public class PartnerEntity implements Serializable{
 		sb.append(this.sc_id).append(SPLIT);
 		sb.append(this.area_id).append(SPLIT);
 		sb.append(this.add_datetime).append(SPLIT);
-		sb.append(this.main_goods);
+		sb.append(this.main_goods).append(SPLIT);
+		sb.append(this.sc_pname);
 		return sb.toString();
 	}
 	

@@ -8,7 +8,7 @@ object WordCountDemo1 {
       val conf = new SparkConf().setAppName("anothor helloworld ").setMaster("local[2]")
       val sc = new SparkContext(conf)
       sc.setLogLevel("WARN")
-      val words =  sc.textFile("D:\\bmsh_hdfs_shengya\\shengya_imei\\all_mac_idfa.txt", 1)
+      val words =  sc.textFile("D:\\mac_idfa.txt", 1)
       println(words.first())
       println("count of words ===>>> " + words.count())
       val lines_words  = words.flatMap { line => line.split(",") }

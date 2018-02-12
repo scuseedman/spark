@@ -123,10 +123,11 @@ public class WindowsHotHousesDemo2 implements Serializable{
 		Map<TopicAndPartition, Long> consumerOffsetsLong = OffSetUtil.initConsumerOffset(Global.getConfVal("KAFKA_TOPIC"),kafkaCluster,kafkaParam);
 		//共享变量进行广播出去
 		kafkaParamBroadcast = sc.sparkContext().broadcast(kafkaParam);
-		//获取 数据
+		//获取 数据。每INTERVAL秒获取一次数据进来
 		JavaInputDStream<String> message = OffSetUtil.createKafkaDStream(sc, consumerOffsetsLong,kafkaParamBroadcast);
 		final AtomicReference<OffsetRange[]> offsetRanges = new AtomicReference<OffsetRange[]>();
 		JavaDStream<String> javaDStream = OffSetUtil.getAndUpdateKafkaOffset(message, offsetRanges,kafkaCluster,kafkaParamBroadcast);
+		//开始处理逻辑 
 //		JavaDStream<String> map_rdd = javaDStream.flatMap(new FlatMapFunction<String, String>() {
 //			private static final long serialVersionUID = 1L;
 //			public Iterable<String> call(String line) throws Exception {
@@ -145,6 +146,7 @@ public class WindowsHotHousesDemo2 implements Serializable{
 				return new Tuple2<String,Integer>(msg,1);
 			}
 		});
+		//每FREQUENCY 秒处理一次前 WINDOWS 秒内的数据，作为一个RDD
 		JavaPairDStream<String, Integer> rp_rdd = pair_rdd.reduceByKeyAndWindow(new Function2<Integer, Integer, Integer>() {
 			private static final long serialVersionUID = 1L;
 			public Integer call(Integer v1, Integer v2) throws Exception {

@@ -257,6 +257,7 @@ public class WindowsHotHouses implements Serializable{
 				return Arrays.asList(line.split(","));//字段分割符
 			}
 		});
+		System.out.println("count of words ===>>> " + words.count());
 		 JavaPairDStream<String, Integer> p_words = words.mapToPair(new PairFunction<String, String, Integer>() {
 			private static final long serialVersionUID = 1L;
 			public Tuple2<String, Integer> call(String word) throws Exception {
@@ -291,9 +292,10 @@ public class WindowsHotHouses implements Serializable{
 						return new Tuple2<String,Integer>(tuple._2,tuple._1);
 					}
 				});
+				System.out.println(" ====================kkkkkk=======================");
 				List<Tuple2<String, Integer>>  lists = n_words.take(3);//取出前10的热词
 				for(Tuple2<String,Integer> tuple:lists){
-					System.out.println(tuple._1 + " ---===>>> " + tuple._2);
+					System.out.println(tuple._1 + " ___---===>>> " + tuple._2);
 				}
 				return n_words;
 			}

@@ -211,7 +211,7 @@ public class OffSetUtil {
                     Map<TopicAndPartition, Object> topicAndPartitionObjectMap = new HashMap<TopicAndPartition, Object>();
                     topicAndPartitionObjectMap.put(topicAndPartition, o.untilOffset());
  
-                    log.warn(
+                    log.info(
                             "Topic: " + o.topic() + " partitions: " + o.partition() + " offset : " + o.untilOffset());
  
                     // 转换java map to scala immutable.map

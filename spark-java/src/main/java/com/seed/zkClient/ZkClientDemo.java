@@ -51,6 +51,8 @@
 */ 
 package com.seed.zkClient;
 
+import java.util.List;
+
 import org.I0Itec.zkclient.ZkClient;
 
 /** 
@@ -64,8 +66,12 @@ import org.I0Itec.zkclient.ZkClient;
 public class ZkClientDemo {
 	public static void main(String[] args) {
 		ZkClient zkClient = new ZkClient(args[0],5000);//建立连接  
-		String data=zkClient.readData("/kafka/consumers");  
-		System.out.println("the node exists ===> " + zkClient.exists("/kafka/consumers"));
-        System.out.println(data);
+		String path = "/kafka/consumers";
+		System.out.println("the node exists ===> " + zkClient.exists(path));
+		List<String> childrens = zkClient.getChildren(path);
+		for(String childNode:childrens){
+			System.out.println(childNode);
+		}
+			
 	}
 }

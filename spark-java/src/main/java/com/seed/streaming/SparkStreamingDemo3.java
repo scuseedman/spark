@@ -168,7 +168,7 @@ public class SparkStreamingDemo3 {
             public JavaRDD<String> call(JavaRDD<String> rdd) throws Exception {
                 OffsetRange[] offsets = ((HasOffsetRanges) rdd.rdd()).offsetRanges();
                 offsetRanges.set(offsets);
-                //代码已经改正 _seed
+                //代码已经改正 _seed  
 //                for (int i = 0; i < offsets.length; i++)
 //                    log.warn("topic : {" +offsets[i].topic() + "}, partitions: {" + offsets[i].partition() 
 //                    		+ "}, fromoffset: {" + offsets[i].fromOffset() + "}, untiloffset: {" + offsets[i].untilOffset() + "}"

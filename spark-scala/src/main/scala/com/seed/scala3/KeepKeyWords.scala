@@ -14,5 +14,8 @@ object KeepKeyWords {
     for(x <- arr){
       println(" keep key words ===>>> ::: " + x)
     }
+    for(x <- arr ){
+      println(" the keep key words ===>>> " + x )
+    }
   }
 }

@@ -32,14 +32,16 @@ _pwd  = sys.argv[1]
 　　卖出后收入：101000元-101元-6元-101元=100792元；
 　　最终实际盈利为：卖出后收入-买入总成本=100792-100106=686元；即当该股票涨幅1%时，获利686元。
 """
+# 股票代码
+stock_code = "sz000002"
 # 判断是否盈利发送邮件的基准线
-sale_level = 30
+sale_level = 3000
 # 股票价格
 #pri = raw_input("购买价格：")
-pri = 5.0
+pri = 32.75
 # 购买数量 
 #nums = raw_input("购买数量：")
-nums = 200
+nums = 100
 # 股票成本总量
 amount = float(pri)*float(nums)
 # 交易佣金 ,假设最低佣金为5元
@@ -61,17 +63,16 @@ pri_ping = (total+transfer)/(1-0.001-0.001)/float(nums)
 percent = 0.02
 # 实时行情获取地址，从东方财富
 #url = "http://finance.ifeng.com/app/hq/stock/sz300104/"
-stock_code = "sz300104"
 url = "http://hq.sinajs.cn/?format=text&list=%s" %(stock_code)
 
 def transaction_fee():
-    print(" 过户费 transfer is: %s " %(transfer))
-    print(" 购买价格 the price is : %s " %(pri))
-    print(" 购买数量 the nums is : %s " %(nums))
-    print(" 股票市值 ：the stock amount of money is : %s " %(amount))
-    print(" 交易佣金 ：the  money of commission is : %s " %(commission))
-    print(" 购买总成本：the  money of total  is : %s " %(total))
-    print(" 平本线价格：the money of pri_ping  is : %s " %(pri_ping))
+    print(" 买入过户费 : %s " %(transfer))
+    print(" 买入购买价格 : %s " %(pri))
+    print(" 买入数量 : %s " %(nums))
+    print(" 买入交易佣金 : %s " %(commission))
+    print(" 买入市值 : %s " %(amount))
+    print(" 买入总成本 : %s " %(total))
+    print(" 卖出平本参考价格 : %s " %(pri_ping))
 
 """
 0: "华泰证券": 股票名字
@@ -99,38 +100,50 @@ def transaction_fee():
 31: "09:48:11": 时间
 """
 def get_realtime_price(url):
-    url = "http://hq.sinajs.cn/?format=text&list=sz300104"
     myPage = urllib2.urlopen(url).read().decode("gbk")
+    print("-------------------------")
     print(str(myPage))
     arr = myPage.split(",")
-    print("length of arr : %d " %(len(arr)))
-    print("last price : %s" %(arr[3]))
-    last_price = float(arr[3])
-    return last_price
+    print(" 实时价格 : %s" %(arr[3]))
+    print(" 今日开盘价 %s -- 昨日收盘价 %s " %(arr[1],arr[2]))
+    print(" 今日最高价 %s -- 今日最低价 %s " %(arr[4],arr[5]))
+    print(" 买一申报价格-股数 (%s,%s) " %(arr[11],arr[10]))
+    print(" 买二申报价格-股数 (%s,%s) " %(arr[13],arr[12]))
+    print(" 买三申报价格-股数 (%s,%s) " %(arr[15],arr[14]))
+    print(" 买四申报价格-股数 (%s,%s) " %(arr[17],arr[16]))
+    print(" 买五申报价格-股数 (%s,%s) " %(arr[19],arr[18]))
+    print(" 卖一申报价格-股数 (%s,%s) " %(arr[21],arr[20]))
+    print(" 卖二申报价格-股数 (%s,%s) " %(arr[23],arr[22]))
+    print(" 卖三申报价格-股数 (%s,%s) " %(arr[25],arr[24]))
+    print(" 卖四申报价格-股数 (%s,%s) " %(arr[27],arr[26]))
+    print(" 卖五申报价格-股数 (%s,%s) " %(arr[29],arr[28]))
+    print("-------------------------")
+    return float(arr[3]) 
 
 # 当前价格卖出与买入的差价
 def sale_is_profit(last_price):
     # 售出总价
     total_price = last_price * nums
-    print("售出获得: %s " %(total_price))
     # 印花税
     stamp_duty = total_price * 0.001
-    print("stamp_duty ===>>> %s " %(stamp_duty))
+    print(" 卖出印花税 : %s " %(stamp_duty))
     # 过户费
     sale_transfer = (0.02/1000)*nums
-    print("sale_transfer ===>>> %s" %(sale_transfer))
+    print(" 卖出过户费 : %s" %(sale_transfer))
     # 售出交易佣金.有最低保护价
     sale_commission = (2.5/10000)*total_price
     if sale_commission <= 5:
         sale_commission = 5
+    print(" 卖出交易佣金 : %s " %(sale_commission))
     sale_real_income = total_price - stamp_duty - sale_transfer - sale_commission
-    print("sale_real_income ===>>> %s" %(sale_real_income))
+    print(" 该价格卖出总市值 : %s " %(total_price))
+    print(" 卖出实际所得 : %s" %(sale_real_income))
     # 卖出总盈利
     sale_profit = sale_real_income - total
-    print("总盈利是 ===>>> %s" %(sale_profit))
+    print(" 卖出盈利 : %s" %(sale_profit))
     if sale_profit >= sale_level:
-        content = " %s 当前价格 ===>>> %s ; 当前已可以盈利 ===>>> %s ; 请判断" %(stock_code,last_price,sale_profit)
-        title = "sz300104 price judge"
+        content = " %s 当前价格 : %s ; 当前已可以盈利 : %s ; 请判断" %(stock_code,last_price,sale_profit)
+        title = "%s price judge" %(stock_code)
         SendEmail("250239675@qq.com",'',content,title)
 
 def SendEmail(fromAdd, toAdd,content,title):
@@ -147,6 +160,10 @@ def SendEmail(fromAdd, toAdd,content,title):
     msg.attach(puretext)
 
     # 下面是附件部分 ，这里分为了好几个类型
+    # 首先是xlsx类型的附件
+    xlsxpart = MIMEApplication(open('stock-trade-python.py', 'rb').read())
+    xlsxpart.add_header('Content-Disposition', 'attachment', filename='stock-trade-python.py')
+    msg.attach(xlsxpart)
 
     try:
         s = smtplib.SMTP_SSL("smtp.qq.com", 465)
@@ -159,10 +176,12 @@ def SendEmail(fromAdd, toAdd,content,title):
         print e.message
 
 if __name__ == "__main__":
-    print("hello,start count ......")
+    print("...............................................................................................")
     transaction_fee()
     last_price = get_realtime_price(url)
-    print("----------------------")
-    print(last_price)
     sale_is_profit(last_price)
+    now_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+    print(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> end !!! ......... %s " %(now_time))
+
+
 

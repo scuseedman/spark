@@ -101,14 +101,14 @@ public class WindowsHotHousesDemo2 implements Serializable{
 	private static final Integer TOPN = 3;//取的top N
 	private static final String SPLIT = ",";
 	private Map<String,String> kafkaParam = null;
-	 private static KafkaCluster kafkaCluster = null;
-	 private static Broadcast<Map<String, String>> kafkaParamBroadcast = null;
-	 private static Logger logger = Logger.getLogger(WindowsHotHousesDemo2.class);
+	private static KafkaCluster kafkaCluster = null;
+	private static Broadcast<Map<String, String>> kafkaParamBroadcast = null;
+	private static Logger logger = Logger.getLogger(WindowsHotHousesDemo2.class);
 	public static void main(String[] args) {
 		String master = System.getProperty("os.name").toLowerCase().contains("windows")?"local[2]":"yarn-cluster";
 		new WindowsHotHousesDemo2().start(master);
 	}
-
+	
 	private void start(String master) {
 		SparkConf conf = new SparkConf().setAppName("windows").setMaster(master);
 		conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
@@ -123,28 +123,30 @@ public class WindowsHotHousesDemo2 implements Serializable{
 		Map<TopicAndPartition, Long> consumerOffsetsLong = OffSetUtil.initConsumerOffset(Global.getConfVal("KAFKA_TOPIC"),kafkaCluster,kafkaParam);
 		//共享变量进行广播出去
 		kafkaParamBroadcast = sc.sparkContext().broadcast(kafkaParam);
-		//获取 数据
+		//获取 数据。每INTERVAL秒获取一次数据进来
 		JavaInputDStream<String> message = OffSetUtil.createKafkaDStream(sc, consumerOffsetsLong,kafkaParamBroadcast);
 		final AtomicReference<OffsetRange[]> offsetRanges = new AtomicReference<OffsetRange[]>();
 		JavaDStream<String> javaDStream = OffSetUtil.getAndUpdateKafkaOffset(message, offsetRanges,kafkaCluster,kafkaParamBroadcast);
-		JavaDStream<String> map_rdd = javaDStream.flatMap(new FlatMapFunction<String, String>() {
-			private static final long serialVersionUID = 1L;
-			public Iterable<String> call(String line) throws Exception {
-				return Arrays.asList(line.split(SPLIT));
-			}
-		});
-//		.map(new Function<String, String>() {
+		//开始处理逻辑 
+//		JavaDStream<String> map_rdd = javaDStream.flatMap(new FlatMapFunction<String, String>() {
 //			private static final long serialVersionUID = 1L;
-//			public String call(String msg) throws Exception {
-//				return msg;
+//			public Iterable<String> call(String line) throws Exception {
+//				return Arrays.asList(line.split(SPLIT));
 //			}
 //		});
+		JavaDStream<String> map_rdd = javaDStream.map(new Function<String, String>() {
+			private static final long serialVersionUID = 1L;
+			public String call(String msg) throws Exception {
+				return msg;
+			}
+		});
 		JavaPairDStream<String,Integer> pair_rdd =  map_rdd.mapToPair(new PairFunction<String, String, Integer>() {
 			private static final long serialVersionUID = 1L;
 			public Tuple2<String, Integer> call(String msg) throws Exception {
 				return new Tuple2<String,Integer>(msg,1);
 			}
 		});
+		//每FREQUENCY 秒处理一次前 WINDOWS 秒内的数据，作为一个RDD
 		JavaPairDStream<String, Integer> rp_rdd = pair_rdd.reduceByKeyAndWindow(new Function2<Integer, Integer, Integer>() {
 			private static final long serialVersionUID = 1L;
 			public Integer call(Integer v1, Integer v2) throws Exception {

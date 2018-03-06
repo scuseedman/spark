@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 import time
+import datetime
 import string
 import urllib2
 import re
@@ -35,10 +36,12 @@ _pwd  = sys.argv[1]
 # 股票代码
 stock_code = "sz000002"
 # 判断是否盈利发送邮件的基准线
-sale_level = 3000
+sale_level = -60
 # 股票价格
 #pri = raw_input("购买价格：")
-pri = 32.75
+pri = 33.05
+# 设置购买日期
+buy_date = '2018-02-28'
 # 购买数量 
 #nums = raw_input("购买数量：")
 nums = 100
@@ -141,11 +144,23 @@ def sale_is_profit(last_price):
     # 卖出总盈利
     sale_profit = sale_real_income - total
     print(" 卖出盈利 : %s" %(sale_profit))
+    # 计算持有天数
+    date_diff = Caltime(buy_date)
+    # 计算年化收益率  (公式：收益额*10000*365天/持有天数/购买总成本/100)
+    year_income_percent = sale_profit*10000*365.0/date_diff/total/100
+    # 当要输出百分号时 需要 %% 这么写，并指定2位小数
+    print(" 当前年化收益 : %.2f %% " %(year_income_percent))
     if sale_profit >= sale_level:
         content = " %s 当前价格 : %s ; 当前已可以盈利 : %s ; 请判断" %(stock_code,last_price,sale_profit)
         title = "%s price judge" %(stock_code)
         SendEmail("250239675@qq.com",'',content,title)
 
+def Caltime(date1):  
+    buy_time = time.strptime(date1,'%Y-%m-%d')
+    y,m,d,H,M,S = buy_time[:6] 
+    old_time = datetime.datetime(y,m,d,H,M,S)
+    now_time = datetime.datetime.now()
+    return float((now_time-old_time).days)
 def SendEmail(fromAdd, toAdd,content,title):
     print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 进入邮件发送 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
     toAdd = ','.join(['250239675@qq.com'])
@@ -161,7 +176,7 @@ def SendEmail(fromAdd, toAdd,content,title):
 
     # 下面是附件部分 ，这里分为了好几个类型
     # 首先是xlsx类型的附件
-    xlsxpart = MIMEApplication(open('stock-trade-python.py', 'rb').read())
+    xlsxpart = MIMEApplication(open('/data/study/stock-trade-python.py', 'rb').read())
     xlsxpart.add_header('Content-Disposition', 'attachment', filename='stock-trade-python.py')
     msg.attach(xlsxpart)
 
